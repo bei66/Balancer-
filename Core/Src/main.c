@@ -101,7 +101,7 @@ int main(void) {
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
     Motor_init();
-    printf("%d\r\n",mpu_dmp_init());
+    printf("%d\r\n", mpu_dmp_init());
 
     /* USER CODE END 2 */
 
@@ -120,7 +120,7 @@ int main(void) {
         mpu_dmp_get_data(&pitch, &roll, &yaw);
         p = map((int) pitch, -180, 180, 0, 1000);
         Motor_run(3, p);
-        printf("p  %f-\r\n",roll);
+        printf("p  %f-\r\n", roll);
         Motor_run(1, 10);
 
 
