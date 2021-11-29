@@ -68,4 +68,4 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
         COMMENT "Building ${HEX_FILE}
 Building ${BIN_FILE}")
-include_directories(./Core/motor ./Core/algorithm ./Core/MPU6050)
+include_directories(./Core/motor ./Core/algorithm ./Core/MPU6050 ./Core/RingBuffer ./Core/IMU901)

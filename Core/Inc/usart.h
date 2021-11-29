@@ -27,7 +27,7 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "RingBuffer.h"
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart1;
@@ -39,7 +39,9 @@ extern UART_HandleTypeDef huart1;
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void USART1_Init(void);
+uint16_t USART1_GetRxData(uint8_t *buf, uint16_t len);
+uint8_t USART1_SendData(uint8_t *data, uint16_t len);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

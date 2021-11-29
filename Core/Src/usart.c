@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
+#include "stdio.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -118,6 +119,52 @@ PUTCHAR_PROTOTYPE
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);//注意把&huart1改为自己的stm32使用的串口号
 
     return ch;
+}
+
+
+
+#define USART1_Buffer_Size 256
+uint8_t USART1_Buffer[USART1_Buffer_Size];
+uint8_t RxBuffer;
+RingBuffer_t USART1_FIFO;
+
+void USART1_Init(void){
+    MX_USART1_UART_Init();
+    Ringbuffer_init(&USART1_FIFO,USART1_Buffer,USART1_Buffer_Size);
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)&RxBuffer, 1);   //再开启接收中断
+
+}
+
+uint8_t USART1_SendData(uint8_t *data, uint16_t len)
+{
+    return HAL_UART_Transmit(&huart1, data, len, 500);
+}
+
+
+/**
+  * @brief  获取串口2接收fifo的数据
+  * @param  buf: 存放的缓冲区
+  * @param  len: 需要获取的长度
+  * @retval uint16_t: 实际获取到的长度 0表示没有数据可获取
+  */
+uint16_t USART1_GetRxData(uint8_t *buf, uint16_t len)
+{
+    return RingBuffer_out(&USART1_FIFO, buf, len);
+}
+
+/**
+ * 串口中断回调函数
+ * @param huart
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+    UNUSED(huart);
+//    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) {     /*!< 接收非空中断 */
+        RingBuffer_in_check(&USART1_FIFO,(uint8_t *)&RxBuffer,1);
+
+//    }
+
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)&RxBuffer, 1);   //再开启接收中断
+
 }
 
 /* USER CODE END 1 */
