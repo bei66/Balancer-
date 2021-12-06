@@ -34,6 +34,7 @@
 #include "sys.h"
 #include "IMU901.h"
 #include "RingBuffer.h"
+#include "Control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,56 +102,23 @@ int main(void) {
     MX_TIM4_Init();
     MX_I2C1_Init();
 //  MX_USART1_UART_Init();
+    MX_USART3_UART_Init();
     /* USER CODE BEGIN 2 */
     Motor_init();
     USART1_Init();
     IMU901_init();
-
+    HAL_Delay(500);
+    Motor_zero();
+    HAL_Delay(500);
+    Motor_run(1, 500);
+    Motor_run(2, 500);
+    Motor_run(3, 500);
+    HAL_Delay(1000);
     /* USER CODE END 2 */
-
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    int8_t DIR = 0;
-    int i = 0;
-    int times = 0;
-    uint8_t ch;
-    float pitch;
-    float roll;
-    float yaw;
-    int x, p, val;
-    short ax, ay, az, gx, gy, gz;
-//    Motor_run(3, 500);
-    HAL_Delay(500);
     while (1) {
-        if (imu901_uart_receive(&ch, 1))    /*!< 获取串口fifo一个字节 */
-        {
-            if (imu901_unpack(ch))            /*!< 解析出有效数据包 */
-            {
-                if (rxPacket.startByte2 == UP_BYTE2)            /*!< 主动上传的数据包 */
-                {
-                    AtkpParsing(&rxPacket);
-                }
-            }
-        } else {
-            HAL_Delay(1);
-
-            times++;
-
-
-            if (times % 1000 == 0)                    /*!< 1秒打印一次数据 */
-            {
-                printf("\r\n");
-                printf("姿态角[XYZ]:    %-6.1f     %-6.1f     %-6.1f   (°)\r\n", attitude.roll, attitude.pitch,
-                       attitude.yaw);
-                printf("加速度[XYZ]:    %-6.3f     %-6.3f     %-6.3f   (g)\r\n", gyroAccData.faccG[0],
-                       gyroAccData.faccG[1], gyroAccData.faccG[2]);
-                printf("角速度[XYZ]:    %-6.1f     %-6.1f     %-6.1f   (°/s)\r\n", gyroAccData.fgyroD[0],
-                       gyroAccData.fgyroD[1], gyroAccData.fgyroD[2]);
-                printf("磁场[XYZ]  :    %-6d     %-6d     %-6d   (uT)\r\n", magData.mag[0], magData.mag[1],
-                       magData.mag[2]);
-                printf("气压 	   :    %-6dPa   %-6dcm\r\n", baroData.pressure, baroData.altitude);
-            }
-        }
+        Control_motor();
     }
 
 

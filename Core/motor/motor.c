@@ -5,9 +5,9 @@
 #include "motor.h"
 
 #define Val_max 0
-#define Val_min 7100
+#define Val_min 8000
 #define Long_min 0
-#define Long_max 3000
+#define Long_max 2150
 
 
 static int Motor_X = 0, Motor_Y = 0, Motor_Z = 0;
@@ -63,7 +63,7 @@ void Motor_init() {
 }
 
 void Motor_zero() {
-    const int8_t Val = 20;
+    const int8_t Val = 5;
     const int8_t DIR = 0;
     int8_t Flag_X, Flag_Y, Flag_Z;
     Flag_X = Flag_Y = Flag_Z = 0;
@@ -102,6 +102,8 @@ void Motor_zero() {
         if (Flag_X == 1 && Flag_Y == 1 && Flag_Z == 1)
             break;
     }
+
+    Motor_X = Motor_Y = Motor_Z = 0;
     HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
@@ -110,13 +112,27 @@ void Motor_zero() {
 void Motor_run(int8_t motor, int16_t Long) {
     HAL_GPIO_WritePin(GPIOA, EN_ALL_Pin, 0);
     static int Long_temp_X = 0, Long_temp_Y = 0, Long_temp_Z = 0;
-    static uint8_t Val = 10;
-    if (motor == 3) {
-       Val = map(abs(map(Motor_Z,Long_min,Long_max,0,1000) - Long),0,500,1,60);
-       Val = Val*Val;
-       if (Val > 55)
-           Val = 55;
-//        printf("Motor_Z  %d ",Val);
+    static int Val = 10;
+    if (Long > 920)
+        Long = 920;
+    if (Long < 20)
+        Long = 20;
+    if (motor == 1) {
+        Val = map(abs(map(Motor_X, Long_min, Long_max, 0, 1000) - Long), 0, 500, 1, 60);
+        Val = Val * Val;
+        if (Val > 55)
+            Val = 55;
+//        printf("Motor_Z  %d  long  %d   Val  %d \r\n",abs(map(Motor_Z,Long_min,Long_max,0,1000)),Long,Val);
+    } else if (motor == 2) {
+        Val = map(abs(map(Motor_Y, Long_min, Long_max, 0, 1000) - Long), 0, 500, 1, 60);
+        Val = Val * Val;
+        if (Val > 55)
+            Val = 55;
+    } else if (motor == 3) {
+        Val = map(abs(map(Motor_Z, Long_min, Long_max, 0, 1000) - Long), 0, 500, 1, 60);
+        Val = Val * Val;
+        if (Val > 55)
+            Val = 55;
     }
     if (motor == 1 && Motor_X != Long && Long_temp_X != Long) {
         Long_X = map(Long, 0, 1000, Long_min, Long_max);
