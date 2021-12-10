@@ -12,6 +12,7 @@
 #include "stdio.h"
 void Motor_init();
 void Motor_zero();
-void Motor_run(int8_t motor,int16_t Long);
+void Motor_run_Abs(int8_t motor,int16_t Long);
+void Motor_Run(uint8_t motor , int Val);
 #endif //BALANCER_MOTOR_H
 

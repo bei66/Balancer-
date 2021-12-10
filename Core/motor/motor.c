@@ -109,7 +109,7 @@ void Motor_zero() {
     HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
 }
 
-void Motor_run(int8_t motor, int16_t Long) {
+void Motor_run_Abs(int8_t motor, int16_t Long) {
     HAL_GPIO_WritePin(GPIOA, EN_ALL_Pin, 0);
     static int Long_temp_X = 0, Long_temp_Y = 0, Long_temp_Z = 0;
     static int Val = 10;
@@ -182,5 +182,80 @@ void Motor_run(int8_t motor, int16_t Long) {
     if (motor == 3)
         Long_temp_Z = Long;
 
+
+}
+
+
+void Motor_Run(uint8_t motor, int Val) {
+    HAL_GPIO_WritePin(GPIOA, EN_ALL_Pin, 0);
+    if (Motor_X > (Long_max - 100) || Motor_X < 100) {
+        HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim1);
+        return;
+    } else if (Motor_Y > (Long_max - 100) || Motor_Y < 100) {
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim2);
+        return;
+    } else if (Motor_Z > (Long_max - 100) || Motor_Z < 100) {
+        HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim3);
+        return;
+    }
+    if (Val == 0) {
+        if (motor == 1) {
+            HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+            HAL_TIM_Base_Stop_IT(&htim1);
+            return;
+        }
+        if (motor == 2) {
+            HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+            HAL_TIM_Base_Stop_IT(&htim2);
+            return;
+        }
+        if (motor == 3) {
+            HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+            HAL_TIM_Base_Stop_IT(&htim3);
+            return;
+        }
+    }
+
+
+    if (motor == 1 && Val != 0) {
+        if (Val > 0) {
+            DIR_X = 1;
+        } else {
+            DIR_X = 0;
+        }
+        TIM1->PSC = map(abs(Val), 0, 100, Val_min, Val_max);
+                __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, 5);
+        HAL_GPIO_WritePin(DIR_X_GPIO_Port, DIR_X_Pin, DIR_X);
+        HAL_TIM_Base_Start_IT(&htim1);
+        HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+        //HAL_TIM_PWM_Start_IT(&htim1,TIM_CHANNEL_1);
+    }
+    if (motor == 2 && Val != 0) {
+        if (Val > 0) {
+            DIR_Y = 1;
+        } else {
+            DIR_Y = 0;
+        }
+        TIM2->PSC = map(abs(Val), 0, 100, Val_min, Val_max);
+                __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 5);
+        HAL_GPIO_WritePin(DIR_Y_GPIO_Port, DIR_Y_Pin, DIR_Y);
+        HAL_TIM_Base_Start_IT(&htim2);
+        HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    }
+    if (motor == 3 && Val != 0) {
+        if (Val > 0) {
+            DIR_Z = 1;
+        } else {
+            DIR_Z = 0;
+        }
+        TIM3->PSC = map(abs(Val), 0, 100, Val_min, Val_max);
+                __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, 5);
+        HAL_GPIO_WritePin(DIR_Z_GPIO_Port, DIR_Z_Pin, DIR_Z);
+        HAL_TIM_Base_Start_IT(&htim3);
+        HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+    }
 
 }

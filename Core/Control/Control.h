@@ -12,5 +12,6 @@
 #include "sys.h"
 #include "IMU901.h"
 #include "my_algorithm.h"
+void Control_motor_Abs(void);
 void Control_motor(void);
 #endif //BALANCER_CONTROL_H
