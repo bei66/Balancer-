@@ -118,13 +118,7 @@ int main(void) {
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
-//        if (HAL_GPIO_ReadPin(Z_ZERO_GPIO_Port, Z_ZERO_Pin) == 0)
-//            printf("1\r\n");
         Control_motor();
-//        Motor_Run(2,10);
-//        HAL_Delay(500);
-//        Motor_Run(2              ,-10);
-//        HAL_Delay(500);
     }
 
 

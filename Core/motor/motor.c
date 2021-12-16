@@ -188,15 +188,28 @@ void Motor_run_Abs(int8_t motor, int16_t Long) {
 
 void Motor_Run(uint8_t motor, int Val) {
     HAL_GPIO_WritePin(GPIOA, EN_ALL_Pin, 0);
-    if (Motor_X > (Long_max - 100) || Motor_X < 100) {
+    if (Motor_X > (Long_max - 100) && Val > 0) {
         HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop_IT(&htim1);
         return;
-    } else if (Motor_Y > (Long_max - 100) || Motor_Y < 100) {
+    } else if (Motor_Y > (Long_max - 100) && Val > 0) {
         HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop_IT(&htim2);
         return;
-    } else if (Motor_Z > (Long_max - 100) || Motor_Z < 100) {
+    } else if (Motor_Z > (Long_max - 100) && Val > 0) {
+        HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim3);
+        return;
+    }
+    if (Motor_X < 100 && Val < 0) {
+        HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim1);
+        return;
+    } else if (Motor_Y < 100 && Val < 0) {
+        HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_1);
+        HAL_TIM_Base_Stop_IT(&htim2);
+        return;
+    } else if (Motor_Z < 100 && Val < 0) {
         HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
         HAL_TIM_Base_Stop_IT(&htim3);
         return;
